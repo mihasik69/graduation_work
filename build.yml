@@ -1,0 +1,22 @@
+---
+- name: build app
+  hosts: role_worker
+  become: yes
+
+  tasks:
+    - name: Ensure clone project from git
+      git:
+        repo: 'https://github.com/boxfuse/boxfuse-sample-java-war-hello.git'
+        dest: /home/admin_vm11/boxfuse-sample-java-war-hello
+
+    - name: Ensure maven is present
+      apt:
+        name: maven
+        state: present
+
+    - name: Ensure maven build project
+      shell: mvn package -f '/home/admin_vm11/boxfuse-sample-java-war-hello/pom.xml'
+
+- name: deplay app
+  hosts: role_web
+  become: yes
