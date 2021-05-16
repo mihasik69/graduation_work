@@ -1,6 +1,6 @@
 ---
 - name: build app
-  hosts: web
+  hosts: role_worker
   become: yes
 
   tasks:
