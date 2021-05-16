@@ -1,6 +1,6 @@
 ---
 - name: build app
-  hosts: role_worker
+  hosts: worker
   become: yes
 
   tasks:
@@ -18,5 +18,5 @@
       shell: mvn package -f '/home/admin_vm11/boxfuse-sample-java-war-hello/pom.xml'
 
 - name: deplay app
-  hosts: role_web
+  hosts: web
   become: yes
