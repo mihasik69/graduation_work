@@ -1,6 +1,6 @@
 ---
 - name: build app
-  hosts: build
+  hosts: worker
   become: yes
 
   tasks:
@@ -20,7 +20,7 @@
 - name: deplay app
   hosts: web
   become: yes
-  
+
   tasks:
     - name: Ensure clone project from git
       git:
