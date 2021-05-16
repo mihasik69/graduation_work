@@ -11,7 +11,7 @@ provider "aws" {
   region = "us-east-2"
 }
 
-resource "aws_instance" "build" {
+resource "aws_instance" "worker" {
   ami           = "ami-08962a4068733a2b6"
   instance_type = "t2.micro"
 
