@@ -17,10 +17,6 @@ resource "aws_instance" "worker" {
   associate_public_ip_address = true
   key_name = "terraform-inventory"
 
-  root_block_device = {
-    delete_on_termination = true
-  }
-
   tags = {
     Role = "worker"
 
@@ -32,10 +28,6 @@ resource "aws_instance" "web" {
   instance_type = "t2.micro"
   associate_public_ip_address = true
   key_name = "terraform-inventory"
-
-  root_block_device = {
-    delete_on_termination = true
-  }
 
   tags = {
     Role = "web"
