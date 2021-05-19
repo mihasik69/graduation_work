@@ -33,13 +33,13 @@ stages {
 
   stage('ansible') {
      sh '''
-       ansible-playbook build.yml
+      ansible-playbook build.yml
      '''
   }
 
   stage('terraform) {
-       sh '''
-            terraform destroy --auto-approve
-       '''
+      sh '''
+       terraform destroy --auto-approve
+      '''
     }
 }
