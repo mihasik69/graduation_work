@@ -7,7 +7,7 @@
     - name: Ensure clone project from git
       git:
         repo: 'https://github.com/boxfuse/boxfuse-sample-java-war-hello.git'
-        dest: /home/admin_vm11/boxfuse-sample-java-war-hello
+        dest: /usr/home//boxfuse-sample-java-war-hello
 
     - name: Ensure maven is present
       apt:
@@ -15,14 +15,27 @@
         state: present
 
     - name: Ensure maven build project
-      shell: mvn package -f '/home/admin_vm11/boxfuse-sample-java-war-hello/pom.xml'
+      shell: mvn package -f '/usr/home//boxfuse-sample-java-war-hello/pom.xml'
+
+     - name: Copy war file from build host to local
+       fetch: src=/usr/home/boxfuse-sample-java-war-hello/target/hello-1.0.war dest=/usr/home/boxfuse-sample-java-war-hello/target/hello-1.0.war
+
+
 
 - name: build app
   hosts: web
   become: yes
 
   tasks:
-    - name: Ensure clone project from git
-      git:
-        repo: 'https://github.com/boxfuse/boxfuse-sample-java-war-hello.git'
-        dest: /home/admin_vm11/boxfuse-sample-java-war-hello
+    - name: Ensure tomcat is present
+        apt:
+          name: tomcat9
+          state: present
+
+    - name: Copy war file from local to web host
+        copy: src=/usr/home//boxfuse-sample-java-war-hello/target/hello-1.0.war dest=/var/lib/tomcat9/webapps/hello-1.0.war
+
+    - name: Ensure tomcat service is started
+        service:
+          name: tomcat9
+          state: started

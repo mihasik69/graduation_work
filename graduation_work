@@ -1,0 +1,45 @@
+pipeline {
+  agent {
+    docker {
+      image 'mihasik69/agent'
+	  arg '-v /var/run/docker.sock:/var/run/docker.sock - u 0:0'
+	  }
+
+stages {
+
+  stage('Copy source with configs') {
+      steps {
+        git(url: 'https://github.com/mihasik69/graduation_work.git', branch: 'main', poll: true, credentialsId: 'git')
+		}
+    }
+
+  stage('terraform') {
+     sh '''
+        terraform init
+        terraform plan
+        terraform apply --auto-approve
+     '''
+  }
+
+  stage('get ip') {
+     sh '''
+        echo "[worker]" >> /etc/ansible/hosts
+        echo $(terraform output instance_worker) | sed 's/"//g' >> /etc/ansible/hosts
+        echo "[web]" >> /etc/ansible/hosts
+        echo $(terraform output instance_web) | sed 's/"//g' >> /etc/ansible/hosts
+        export ANSIBLE_HOST_KEY_CHECKING=False
+     '''
+  }
+
+  stage('ansible') {
+     sh '''
+       ansible-playbook build.yml
+     '''
+  }
+
+  stage('terraform) {
+       sh '''
+            terraform destroy --auto-approve
+       '''
+    }
+}
