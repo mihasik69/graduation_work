@@ -37,6 +37,11 @@ resource "time_sleep" "wait_30_seconds" {
 output "instance_web" {
   value = aws_instance.web.public_ip
 }
+
+output "instance_worker" {
+  value = aws_instance.worker.public_ip
+}
+
 resource "null_resource" "ansible_hosts_provisioner" {
   depends_on = [time_sleep.wait_30_seconds]
   provisioner "local-exec" {
@@ -44,7 +49,7 @@ resource "null_resource" "ansible_hosts_provisioner" {
     command = <<EOT
       export terraform_worker_public_ip=$(terraform output instance_web);
       echo $terraform_worker_public_ip;
-      export terraform_web_public_ip=$(terraform output web_public_ip);
+      export terraform_web_public_ip=$(terraform output instance_worker);
       echo $terraform_web_public_ip;
       sed -i -e "s/staging_instance_ip/$terraform_staging_public_ip/g" ./inventory/hosts;
       sed -i -e 's/"//g' ./inventory/hosts;
