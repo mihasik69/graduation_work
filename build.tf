@@ -47,14 +47,14 @@ resource "null_resource" "ansible_hosts_provisioner" {
   provisioner "local-exec" {
     interpreter = ["/bin/bash" ,"-c"]
     command = <<EOT
-      export terraform_worker_public_ip=$(terraform output instance_web);
-      echo $terraform_worker_public_ip;
-      export terraform_web_public_ip=$(terraform output instance_worker);
-      echo $terraform_web_public_ip;
-      sed -i -e "s/staging_instance_ip/$terraform_staging_public_ip/g" ./inventory/hosts;
+      export terraform_worcer_public_ip=$(terraform output instance_worker);
+      echo $terraform_staging_public_ip;
+      export terraform_web_public_ip=$(terraform output instance_web);
+      echo $terraform_production_public_ip;
+      sed -i -e "s/instance_worker/terraform_worker_public_ip/g" ./inventory/hosts;
+      sed -i -e "s/instance_web/terraform_web_public_ip/g" ./inventory/hosts;
       sed -i -e 's/"//g' ./inventory/hosts;
       export ANSIBLE_HOST_KEY_CHECKING=False
     EOT
   }
 }
-
