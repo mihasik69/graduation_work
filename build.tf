@@ -17,7 +17,7 @@ resource "aws_instance" "worker" {
 
   tags = {
     Role = "worker"
-
+    Name = "worker"
   }
 }
 
@@ -27,18 +27,22 @@ resource "aws_instance" "web" {
 
   tags = {
     Role = "web"
+    Name = "web"
   }
 }
 resource "time_sleep" "wait_30_seconds" {
   create_duration = "30s"
 }
 
+output "instance_web" {
+  value = aws_instance.web.public_ip
+}
 resource "null_resource" "ansible_hosts_provisioner" {
   depends_on = [time_sleep.wait_30_seconds]
   provisioner "local-exec" {
     interpreter = ["/bin/bash" ,"-c"]
     command = <<EOT
-      export terraform_worker_public_ip=$(terraform output public_iansiblep.worker);
+      export terraform_worker_public_ip=$(terraform output instance_web);
       echo $terraform_worker_public_ip;
       export terraform_web_public_ip=$(terraform output web_public_ip);
       echo $terraform_web_public_ip;
@@ -49,6 +53,3 @@ resource "null_resource" "ansible_hosts_provisioner" {
   }
 }
 
-output "instance_ips" {
-  value = aws_instance.web.*.public_ip
-}
